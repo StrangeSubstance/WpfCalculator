@@ -11,7 +11,7 @@
 
 
 
-            <Button Click="Button_Click" Content="Сложение" Margin="25, 50, 25, 0"/>
+            <Button Click="Button_Click" Content="Новое действие" Margin="25, 50, 25, 0"/>
 
             <Button Click="Delete" Content="Удалить" Margin="25, 10, 25, 0"/>
 

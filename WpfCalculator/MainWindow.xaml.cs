@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Collections.ObjectModel;
 
 namespace WpfCalculator
 {
@@ -22,6 +23,7 @@ namespace WpfCalculator
     {
         int result = 0;
         int coordinate = 5;
+        int num;
         public MainWindow()
         {
             InitializeComponent();
@@ -29,6 +31,9 @@ namespace WpfCalculator
         }
         public void Button_Click(object sender, RoutedEventArgs e)
         {
+            StackPanel stackPanel = new StackPanel();
+            mySP.Children.Add(stackPanel);
+
             TextBox textBox = new TextBox()
             {
                 Margin = new Thickness(5, coordinate, 5, 5)
@@ -37,45 +42,72 @@ namespace WpfCalculator
 
             textBox.TextChanged += Text_Changed;
             coordinate += 1;
-            mySP.Children.Add(textBox);
+            stackPanel.Children.Add(textBox);
 
-            //ComboBox operations = OperComboBox();
-
+            ComboBox comboBox = new ComboBox();
+            stackPanel.Children.Add(comboBox);
+            ObservableCollection<string> mathOp = new ObservableCollection<string>();
+            mathOp.Add("+");
+            mathOp.Add("-");
+            mathOp.Add("*");
+            mathOp.Add("/");
+            comboBox.ItemsSource = mathOp;
         }
-
-        //private ComboBox OperComboBox()
-        //{
-        //    ComboBox CB = new ComboBox();
-        //    //foreach (TextBox textBox in )
-        //    {
-
-        //        < ComboBox CB = "Operations" >
-        //        {
-        //        < TextBlock > + </ TextBlock >
-        //        < TextBlock > - </ TextBlock >
-        //        < TextBlock > * </ TextBlock >
-        //        < TextBlock > / </ TextBlock >
-        //        }
-        //    </ ComboBox >
-
-        //    }
-        //    return CB;
-        //}
 
 
         public void Text_Changed(object sender, RoutedEventArgs e)
         {
-            int sum = 0;
             foreach (var element in mySP.Children)
             {
-                if (element is TextBox text)
+                if (element is StackPanel panel)
                 {
-                    if (int.TryParse(text.Text, out var num)) ;
+                    foreach (var item in panel.Children)
+                    {
+                        if (item is TextBox textBox)
+                        {
+                            try
+                            {
+                                num = int.Parse(textBox.Text);
+                            }
+                            catch
+                            {
+                                if (textBox.Text == "") { }
+                                else MessageBox.Show("Это не число. Введи нормально.");
+                            }
+                        }
+                        if (item is ComboBox comboBox)
+                        {
+                            switch (comboBox.SelectedItem)
+                            {
+                                case "+":
+                                    {
+                                        result += num;
+                                        break;
+                                    }
+                                case "-":
+                                    {
+                                        result -= num;
+                                        break;
+                                    }
+                                case "*":
+                                    {
+                                        result *= num;
+                                        break;
+                                    }
+                                case "/":
+                                    {
+                                        result /= num;
+                                        break;
+                                    }
 
-                    sum += num;
+                            }
+                        }
+                    }
+
                 }
             }
-            label_res.Content = sum;
+            label_res.Content = result;
+            result = 0;
         }
 
         private void Delete(object sender, RoutedEventArgs e)
@@ -83,7 +115,7 @@ namespace WpfCalculator
             int spLength = mySP.Children.Count - 1;
             for (int i = spLength; i >= 0; i--)
             {
-                if (mySP.Children[i] is TextBox)
+                if (mySP.Children[i] is StackPanel)
                     mySP.Children.RemoveAt(i);
                 break;
             }
